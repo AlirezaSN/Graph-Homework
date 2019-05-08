@@ -8,4 +8,4 @@ $ pip3 install -r requirements.txt
 $ python3 main.py <DATASET_FILE>
 ```
 
-DATASET_FILE can be `facebook`, `email`, `physics` and `food_web`.
+DATASET_FILE can be `facebook`, `physics` and `food_web`.
