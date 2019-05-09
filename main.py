@@ -59,19 +59,31 @@ def get_diameter(graph):
         print('diameter: ', diamter)
     else:
         components = nx.connected_components(graph)
-        print('graph is disconnected ... number of components are: ', len(components))
-        diameters = []
+        number_connected_components = nx.number_connected_components(graph)
+        print('graph is disconnected ... number of components are: ', number_connected_components)
+        diameter = 0
         for component in components:
             subgraph = graph.subgraph(component)
-            diameter = nx.diameter(subgraph)
-            diameters.append(diameter)
-        print('diameter: ', max(diameters))
+            sub_diameter = nx.diameter(subgraph)
+            if sub_diameter > diameter:
+                diameter = sub_diameter
+        print('diameter: ', diameter)
 
 ################### Average Shortest Path Length ###################
 
 def get_average_shortest_path(graph):
-    average_shortest_path = nx.average_shortest_path_length(graph)
-    print('average shortest path: ', average_shortest_path)
+    if nx.is_connected(graph):
+        average_shortest_path = nx.average_shortest_path_length(graph)
+        print('average shortest path: ', average_shortest_path)
+    else:
+        components = nx.connected_components(graph)
+        number_connected_components = nx.number_connected_components(graph)
+        average_shortest_path = 0
+        for component in components:
+            subgraph = graph.subgraph(component)
+            sub_asp = nx.average_shortest_path_length(subgraph)
+            average_shortest_path += sub_asp
+        print('average shortest path: ', float(average_shortest_path / number_connected_components))
 
 ################### Degree Distribution Plot ###################
 
@@ -195,47 +207,36 @@ def create_custom_graph():
     g.add_edge('insectivirous bird', 'owl')
     g.add_edge('insectivirous bird', 'fox')
     g.add_edge('toad', 'snake')
-
-    get_number_of_nodes(g)
-    get_number_of_edges(g)
-    get_average_degree(g)
-    get_density(g)
-    get_first_cc(g)
-    get_second_cc(g)
-    get_diameter(g)
-    get_average_shortest_path(g)
-    get_assortivity(g)
-    get_degree_centrality(g)
-    get_closeness_centrality(g)
-    get_betweenness_centrality(g)
-    draw_degree_distribution(g)
-    
-
+    return g
 
 ###################################### Excecution ######################################
+
+def calculate_graph_metrics(graph):
+    get_number_of_nodes(graph)
+    get_number_of_edges(graph)
+    get_average_degree(graph)
+    get_density(graph)
+    get_first_cc(graph)
+    get_second_cc(graph)
+    get_diameter(graph)
+    get_average_shortest_path(graph)
+    get_assortivity(graph)
+    get_degree_centrality(graph)
+    get_closeness_centrality(graph)
+    get_betweenness_centrality(graph)
+    #draw_degree_distribution(graph)
 
 if __name__ == '__main__':
     if len(sys.argv) <= 1:
         print('please pass the input file as parameter')
     else:
         if sys.argv[1] == 'food_web':
-            create_custom_graph()
+            graph = create_custom_graph()
+            calculate_graph_metrics(graph)
         else:
             filename = DATASET_FOLDER + sys.argv[1] + '.txt'
             if os.path.exists(filename):
                 graph = nx.read_edgelist(filename, create_using=nx.Graph(), nodetype=int)
-                get_number_of_nodes(graph)
-                get_number_of_edges(graph)
-                get_average_degree(graph)
-                get_density(graph)
-                get_first_cc(graph)
-                get_second_cc(graph)
-                get_diameter(graph)
-                get_average_shortest_path(graph)
-                get_assortivity(graph)
-                get_degree_centrality(graph)
-                get_closeness_centrality(graph)
-                get_betweenness_centrality(graph)
-                #draw_degree_distribution(graph)
+                calculate_graph_metrics(graph)
             else:
                 print('file not found. check your input parameter')
