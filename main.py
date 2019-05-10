@@ -91,23 +91,19 @@ def draw_degree_distribution(graph):
     degree_sequence = sorted([d for n, d in graph.degree()], reverse=True)
     degreeCount = collections.Counter(degree_sequence)
     deg, cnt = zip(*degreeCount.items())
-
     fig, ax = plt.subplots()
     plt.bar(deg, cnt, width=0.80, color='b')
-
     plt.title("Degree Histogram")
     plt.ylabel("Count")
     plt.xlabel("Degree")
     ax.set_xticks([d + 0.4 for d in deg])
     ax.set_xticklabels(deg)
-
     plt.axes([0.4, 0.4, 0.5, 0.5])
     Gcc = sorted(nx.connected_component_subgraphs(graph), key=len, reverse=True)[0]
     pos = nx.spring_layout(graph)
     plt.axis('off')
     nx.draw_networkx_nodes(graph, pos, node_size=20)
     nx.draw_networkx_edges(graph, pos, alpha=0.4)
-
     plt.show()
 
 ################### Assortivity ###################
@@ -224,7 +220,7 @@ def calculate_graph_metrics(graph):
     get_degree_centrality(graph)
     get_closeness_centrality(graph)
     get_betweenness_centrality(graph)
-    #draw_degree_distribution(graph)
+    draw_degree_distribution(graph)
 
 if __name__ == '__main__':
     if len(sys.argv) <= 1:
