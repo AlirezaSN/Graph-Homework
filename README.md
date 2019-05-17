@@ -15,14 +15,14 @@ In order to calculate graph metrics such as #nodes, #edges, average degree, dens
 $ python3 main.py calculate <DATASET_FILE>
 ```
 
-DATASET_FILE can be `facebook`, `physics` and `food_web`.
+**DATASET_FILE** can be `facebook`, `physics` and `food_web`.
 
 ## Generate Famous Random Graphs
 
-In order to generate random graphs like `like Erdős-Rényi`, `Watts-Strogatz`, `Barabasi-Albert`, run this:
+In order to generate random graphs like `Erdős-Rényi`, `Watts-Strogatz`, `Barabasi-Albert`, run this:
 
 ```
 $ python3 main.py generate <DATASET_FILE> <RANDOM_GRAPH_TYPE>
 ```
 
-RANDOM_GRAPH_TYPE can be `erdos_renyi`, `watts_strogatz` and `barabasi_albert`
+**RANDOM_GRAPH_TYPE** can be `erdos_renyi`, `watts_strogatz` and `barabasi_albert`
