@@ -1,0 +1,15 @@
+number of nodes:  18772
+number of edges:  187620
+average degree:  19.98934583422118
+density:  0.0010649057500517383
+clustering coefficient 1 (transivity):  0.005611875902754299
+clustering coefficient 2:  0.006628713204047381
+diameter:  5
+average shortest path:  3.2250544409084183
+degree assortativity coefficient:  -0.0
+top 5 at degree centrality:  [(13, 0.035533535773267275), (10, 0.03441478876991103), (14, 0.02876778008630334), (12, 0.02716957008150871), (1, 0.02653028607959086)]
+degree centralization (based on freeman formula):  0.9847955162341716
+top 5 at closeness centrality:  [(13, 0.45116089025621303), (10, 0.4472906638707525), (14, 0.44007596005064004), (11, 0.43551193707802605), (12, 0.4346245571789113)]
+closeness centralization (based on freeman formula):  0.7540693809198584
+top 5 at betweenness centrality:  [(13, 0.034677919538446456), (10, 0.03241486633430778), (14, 0.02496683262358716), (12, 0.022742854200952393), (1, 0.022025241207928214)]
+betweenness centralization (based on freeman formula):  0.9967056482152976
