@@ -112,7 +112,7 @@ def get_assortivity(graph):
     degree_assortativity_coefficient = nx.degree_assortativity_coefficient(graph)
     print('degree assortativity coefficient: ', "%3.1f"%degree_assortativity_coefficient)
 
-################### Centrality 1: ###################
+################### Centrality 1: Degree ###################
 
 def get_degree_centrality(graph):
     degree_centrality = nx.degree_centrality(graph)
@@ -125,7 +125,7 @@ def get_degree_centrality(graph):
         all_diff += res[length-1][1] - dc[1]
     print('degree centralization (based on freeman formula): ', float(all_diff/(max_diff*length)))
 
-################### Centrality 2: ###################
+################### Centrality 2: Closeness ###################
 
 def get_closeness_centrality(graph):
     closeness_centrality = nx.closeness_centrality(graph)
@@ -138,7 +138,7 @@ def get_closeness_centrality(graph):
         all_diff += res[length-1][1] - dc[1]
     print('closeness centralization (based on freeman formula): ', float(all_diff/(max_diff*length)))
 
-################### Centrality 3: ###################
+################### Centrality 3: Betweenness ###################
 
 def get_betweenness_centrality(graph):
     betweenness_centrality = nx.betweenness_centrality(graph)
@@ -205,9 +205,46 @@ def create_custom_graph():
     g.add_edge('toad', 'snake')
     return g
 
+################### Erdős-Rényi Graph ###################
+
+def generate_erdos_renyi_graph(graph, filename):
+    print('######################################')
+    print('Generating Erdős-Rényi Graph...')
+    print('######################################')
+    number_of_nodes = graph.number_of_nodes()
+    prob_dics = {'food_web': 0.5, 'facebook': 0.01, 'physics': 0.0011}
+    random_net = nx.erdos_renyi_graph(n=number_of_nodes, p=prob_dics[filename])
+    calculate_graph_metrics(random_net)
+
+################### Watts-Strogatz Graph ###################
+
+def generate_watts_strogatz_graph(graph, filename):
+    print('######################################')
+    print('Generating Watts-Strogatz Graph...')
+    print('######################################')
+    number_of_nodes = graph.number_of_nodes()
+    prob_dics = {'food_web': 0.6, 'facebook': 0.01, 'physics': 0.0015}
+    nearest_neighbors_dict = {'food_web': 5, 'facebook': 44, 'physics': 21}
+    random_net = nx.watts_strogatz_graph(n=number_of_nodes, k=nearest_neighbors_dict[filename], p=prob_dics[filename])
+    calculate_graph_metrics(random_net)
+
+################### Barabasi-Albert Graph ###################
+
+def generate_barabasi_albert_graph(graph, filename):
+    print('######################################')
+    print('Generating Barabasi-Albert Graph...')
+    print('######################################')
+    number_of_nodes = graph.number_of_nodes()
+    attachment_dict = {'food_web': 3, 'facebook': 22, 'physics': 10}
+    random_net = nx.barabasi_albert_graph(n=number_of_nodes, m=attachment_dict[filename])
+    calculate_graph_metrics(random_net)
+
 ###################################### Excecution ######################################
 
 def calculate_graph_metrics(graph):
+    print('######################################')
+    print('Calculating Graph Metrics...')
+    print('######################################')
     get_number_of_nodes(graph)
     get_number_of_edges(graph)
     get_average_degree(graph)
@@ -223,16 +260,34 @@ def calculate_graph_metrics(graph):
     draw_degree_distribution(graph)
 
 if __name__ == '__main__':
-    if len(sys.argv) <= 1:
-        print('please pass the input file as parameter')
+    if len(sys.argv) <= 2:
+        print('please pass a parameter')
     else:
-        if sys.argv[1] == 'food_web':
+        graph = None
+        if sys.argv[2] == 'food_web':
+            filename = 'food_web'
             graph = create_custom_graph()
-            calculate_graph_metrics(graph)
         else:
-            filename = DATASET_FOLDER + sys.argv[1] + '.txt'
+            filename = DATASET_FOLDER + sys.argv[2] + '.txt'
             if os.path.exists(filename):
                 graph = nx.read_edgelist(filename, create_using=nx.Graph(), nodetype=int)
-                calculate_graph_metrics(graph)
             else:
                 print('file not found. check your input parameter')
+        if graph is None:
+            exit(0)
+        if sys.argv[1] == 'calculate':
+            calculate_graph_metrics(graph)
+        elif sys.argv[1] == 'generate':
+            if len(sys.argv) <= 3:
+                print('please pass a random graph type')
+            elif sys.argv[3] == 'erdos_renyi':
+                generate_erdos_renyi_graph(graph, sys.argv[2])
+            elif sys.argv[3] == 'watts_strogatz':
+                generate_watts_strogatz_graph(graph, sys.argv[2])
+            elif sys.argv[3] == 'barabasi_albert':
+                generate_barabasi_albert_graph(graph, sys.argv[2])
+            else:
+                print('invalid random graph type')
+        else:
+            print('invalid command')
+            
