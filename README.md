@@ -19,10 +19,10 @@ $ python3 main.py calculate <DATASET_FILE>
 
 ## Generate Famous Random Graphs
 
-In order to generate random graphs like `Erdős-Rényi`, `Watts-Strogatz`, `Barabasi-Albert`, run this:
+In order to generate random graphs like `Erdős-Rényi`, `Watts-Strogatz`, `Barabasi-Albert` and `Random-Kernel` run this:
 
 ```
 $ python3 main.py generate <DATASET_FILE> <RANDOM_GRAPH_TYPE>
 ```
 
-**RANDOM_GRAPH_TYPE** can be `erdos_renyi`, `watts_strogatz` and `barabasi_albert`
+**RANDOM_GRAPH_TYPE** can be `erdos_renyi`, `watts_strogatz`, `barabasi_albert` and `random_kernel`
