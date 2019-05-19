@@ -239,6 +239,24 @@ def generate_barabasi_albert_graph(graph, filename):
     random_net = nx.barabasi_albert_graph(n=number_of_nodes, m=attachment_dict[filename])
     calculate_graph_metrics(random_net)
 
+################### Random-Kernel Graph ###################
+
+def integral(u, w, z):
+    c = 1
+    return c * (z - w)
+
+def root(u, w, z):
+    c = 1
+    return r / c + w
+
+def generate_random_kernel_graph(graph, filename):
+    print('######################################')
+    print('Generating Random-Kernel Graph...')
+    print('######################################')
+    number_of_nodes = graph.number_of_nodes()
+    random_net = nx.random_kernel_graph(number_of_nodes, integral, root)
+    calculate_graph_metrics(random_net)
+
 ###################################### Excecution ######################################
 
 def calculate_graph_metrics(graph):
@@ -286,6 +304,8 @@ if __name__ == '__main__':
                 generate_watts_strogatz_graph(graph, sys.argv[2])
             elif sys.argv[3] == 'barabasi_albert':
                 generate_barabasi_albert_graph(graph, sys.argv[2])
+            elif sys.argv[3] == 'random_kernel':
+                generate_random_kernel_graph(graph, sys.argv[2])
             else:
                 print('invalid random graph type')
         else:
