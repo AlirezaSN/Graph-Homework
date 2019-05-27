@@ -2,9 +2,13 @@
 
 import sys
 import os.path
+import random
 import collections
 import networkx as nx
+from networkx.algorithms import community
 import matplotlib.pyplot as plt
+from matplotlib import cm
+from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 
 ###################################### Code ######################################
 
@@ -257,6 +261,58 @@ def generate_random_kernel_graph(graph, filename):
     random_net = nx.random_kernel_graph(number_of_nodes, integral, root)
     calculate_graph_metrics(random_net)
 
+################### Girvan-Newman Algorithm ###################
+
+def detect_girvan_newman_communities(graph):
+    print('######################################')
+    print('Detecting Communities based on Girvan-Newman algorithm...')
+    print('######################################')
+    components = community.girvan_newman(graph)
+    community_tuple = tuple(sorted(c) for c in next(components))
+    print('communities are: ', community_tuple)
+    print('######################################')
+    print('Calculating Modularity...')
+    print('######################################')
+    modularity = community.modularity(graph, next(components))
+    print('modularity is: ', modularity)
+    print('######################################')
+    print('Drawing Communities...')
+    print('######################################')
+    pos = nx.spring_layout(graph)
+    i = 0
+    get_colors = lambda n: list(map(lambda i: "#" + "%06x" % random.randint(0, 0xFFFFFF),range(n)))
+    cs = get_colors(len(community_tuple))
+    for nodes in community_tuple:
+        nx.draw_networkx_nodes(graph, pos, nodelist=nodes, node_color=cs[i])
+        i += 1
+    plt.show()
+
+################### Clauset-Newman-Moore Algorithm ###################
+
+def detect_clauset_newman_moore_communities(graph):
+    print('######################################')
+    print('Detecting Communities based on Clauset-Newman-Moore algorithm...')
+    print('######################################')
+    components = community.greedy_modularity_communities(graph)
+    community_tuple = tuple(sorted(c) for c in list(components))
+    print('communities are: ', community_tuple)
+    print('######################################')
+    print('Calculating Modularity...')
+    print('######################################')
+    modularity = community.modularity(graph, components)
+    print('modularity is: ', modularity)
+    print('######################################')
+    print('Drawing Communities...')
+    print('######################################')
+    pos = nx.spring_layout(graph)
+    i = 0
+    get_colors = lambda n: list(map(lambda i: "#" + "%06x" % random.randint(0, 0xFFFFFF),range(n)))
+    cs = get_colors(len(community_tuple))
+    for nodes in community_tuple:
+        nx.draw_networkx_nodes(graph, pos, nodelist=nodes, node_color=cs[i])
+        i += 1
+    plt.show()
+
 ###################################### Excecution ######################################
 
 def calculate_graph_metrics(graph):
@@ -292,6 +348,7 @@ if __name__ == '__main__':
             else:
                 print('file not found. check your input parameter')
         if graph is None:
+            print('can not build graph')
             exit(0)
         if sys.argv[1] == 'calculate':
             calculate_graph_metrics(graph)
@@ -308,6 +365,15 @@ if __name__ == '__main__':
                 generate_random_kernel_graph(graph, sys.argv[2])
             else:
                 print('invalid random graph type')
+        elif sys.argv[1] == 'community_detect':
+            if len(sys.argv) <= 3:
+                print('please pass a community detection algorithm')
+            elif sys.argv[3] == 'girvan_newman':
+                detect_girvan_newman_communities(graph)
+            elif sys.argv[3] == 'clauset_newman_moore':
+                detect_clauset_newman_moore_communities(graph)
+            else:
+                print('invalid community detection algorithm')
         else:
             print('invalid command')
             
