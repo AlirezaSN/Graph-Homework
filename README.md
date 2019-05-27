@@ -26,6 +26,7 @@ $ python3 main.py generate <DATASET_FILE> <RANDOM_GRAPH_TYPE>
 ```
 
 **DATASET_FILE** can be `facebook`, `physics` and `food_web`.
+
 **RANDOM_GRAPH_TYPE** can be `erdos_renyi`, `watts_strogatz`, `barabasi_albert` and `random_kernel`.
 
 ## Detect Communities
@@ -37,4 +38,5 @@ $ python3 main.py community_detect <DATASET_FILE> <COMMUNITY_DETECTION_ALGORITHM
 ```
 
 **DATASET_FILE** can be `facebook`, `physics` and `food_web`.
+
 **COMMUNITY_DETECTION_ALGORITHM** can be `girvan_newman` and `clauset_newman_moore`.
