@@ -1,0 +1,3 @@
+communities: (['bird', 'fox', 'hawk', 'mice', 'owl', 'plant', 'rabbit', 'squirrel'], ['herbivorous insect', 'insectivirous bird', 'predaceous insect', 'snake', 'spider', 'toad'])
+number of communities: 2
+modularity: 0.2699724517906336
