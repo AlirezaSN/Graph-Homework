@@ -9,6 +9,13 @@ from networkx.algorithms import community
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
+import ndlib.models.ModelConfig as mc
+import ndlib.models.epidemics.SIRModel as sir
+import ndlib.models.epidemics.SIModel as si
+from bokeh.io import output_notebook, show
+from ndlib.viz.bokeh.DiffusionTrend import DiffusionTrend
+from ndlib.viz.bokeh.DiffusionPrevalence import DiffusionPrevalence
+from ndlib.viz.bokeh.MultiPlot import MultiPlot
 
 ###################################### Code ######################################
 
@@ -313,6 +320,85 @@ def detect_clauset_newman_moore_communities(graph):
         i += 1
     plt.show()
 
+################### SIR Epidemic model on Erdős-Rényi ###################
+
+def simulate_sir_on_erdos_renyi():
+    print('######################################')
+    print('Simulating SIR Model on Erdős-Rényi Graph...')
+    print('######################################')
+    g = nx.erdos_renyi_graph(1000, 0.15)
+    model = sir.SIRModel(g)
+    cfg = mc.Configuration()
+    cfg.add_model_parameter('beta', 0.01)
+    cfg.add_model_parameter('gamma', 0.005)
+    cfg.add_model_parameter("fraction_infected", 0.05)
+    model.set_initial_status(cfg)
+    iterations = model.iteration_bunch(200)
+    trends = model.build_trends(iterations)
+    draw_epidemic_plot(model, trends)
+
+################### SIR Epidemic model on Barabasi-Albert  ###################
+
+def simulate_sir_on_barabasi_albert():
+    print('######################################')
+    print('Simulating SIR Model on Barabasi-Albert Graph...')
+    print('######################################')
+    g = nx.barabasi_albert_graph(1000, 10)
+    model = sir.SIRModel(g)
+    cfg = mc.Configuration()
+    cfg.add_model_parameter('beta', 0.01)
+    cfg.add_model_parameter('gamma', 0.005)
+    cfg.add_model_parameter("fraction_infected", 0.05)
+    model.set_initial_status(cfg)
+    iterations = model.iteration_bunch(200)
+    trends = model.build_trends(iterations)
+    draw_epidemic_plot(model, trends)
+
+################### SI Epidemic model on Erdős-Rényi ###################
+
+def simulate_si_on_erdos_renyi():
+    print('######################################')
+    print('Simulating SI Model on Erdős-Rényi Graph...')
+    print('######################################')
+    g = nx.erdos_renyi_graph(1000, 0.15)
+    model = si.SIModel(g)
+    cfg = mc.Configuration()
+    cfg.add_model_parameter('beta', 0.01)
+    cfg.add_model_parameter("fraction_infected", 0.05)
+    model.set_initial_status(cfg)
+    iterations = model.iteration_bunch(200)
+    trends = model.build_trends(iterations)
+    draw_epidemic_plot(model, trends)
+
+################### SI Epidemic model on Barabasi-Albert ###################
+
+def simulate_si_on_barabasi_albert():
+    print('######################################')
+    print('Simulating SI Model on Barabasi-Albert Graph...')
+    print('######################################')
+    g = nx.barabasi_albert_graph(1000, 10)
+    model = si.SIModel(g)
+    cfg = mc.Configuration()
+    cfg.add_model_parameter('beta', 0.01)
+    cfg.add_model_parameter("fraction_infected", 0.05)
+    model.set_initial_status(cfg)
+    iterations = model.iteration_bunch(200)
+    trends = model.build_trends(iterations)
+    draw_epidemic_plot(model, trends)
+
+################### Epidemic model Draw ###################
+
+def draw_epidemic_plot(model, trends):
+    viz = DiffusionTrend(model, trends)
+    p = viz.plot(width=650, height=500)
+    viz2 = DiffusionPrevalence(model, trends)
+    p2 = viz2.plot(width=650, height=500)
+    vm = MultiPlot()
+    vm.add_plot(p)
+    vm.add_plot(p2)
+    m = vm.plot()
+    show(m)
+
 ###################################### Excecution ######################################
 
 def calculate_graph_metrics(graph):
@@ -337,43 +423,56 @@ if __name__ == '__main__':
     if len(sys.argv) <= 2:
         print('please pass a parameter')
     else:
-        graph = None
-        if sys.argv[2] == 'food_web':
-            filename = 'food_web'
-            graph = create_custom_graph()
+        if sys.argv[1] == 'simulate':
+            if sys.argv[2] == 'si' and sys.argv[3] == 'erdos_renyi':
+                simulate_si_on_erdos_renyi()
+            elif sys.argv[2] == 'sir' and sys.argv[3] == 'erdos_renyi':
+                simulate_sir_on_erdos_renyi()
+            elif sys.argv[2] == 'si' and sys.argv[3] == 'barabasi_albert':
+                simulate_si_on_barabasi_albert()
+            elif sys.argv[2] == 'sir' and sys.argv[3] == 'barabasi_albert':
+                simulate_sir_on_barabasi_albert()
+            else:
+                print('invalid input for simulation epidemic model')
+                exit(0)
         else:
-            filename = DATASET_FOLDER + sys.argv[2] + '.txt'
-            if os.path.exists(filename):
-                graph = nx.read_edgelist(filename, create_using=nx.Graph(), nodetype=int)
+            graph = None
+            if sys.argv[2] == 'food_web':
+                filename = 'food_web'
+                graph = create_custom_graph()
             else:
-                print('file not found. check your input parameter')
-        if graph is None:
-            print('can not build graph')
-            exit(0)
-        if sys.argv[1] == 'calculate':
-            calculate_graph_metrics(graph)
-        elif sys.argv[1] == 'generate':
-            if len(sys.argv) <= 3:
-                print('please pass a random graph type')
-            elif sys.argv[3] == 'erdos_renyi':
-                generate_erdos_renyi_graph(graph, sys.argv[2])
-            elif sys.argv[3] == 'watts_strogatz':
-                generate_watts_strogatz_graph(graph, sys.argv[2])
-            elif sys.argv[3] == 'barabasi_albert':
-                generate_barabasi_albert_graph(graph, sys.argv[2])
-            elif sys.argv[3] == 'random_kernel':
-                generate_random_kernel_graph(graph, sys.argv[2])
+                filename = DATASET_FOLDER + sys.argv[2] + '.txt'
+                if os.path.exists(filename):
+                    graph = nx.read_edgelist(filename, create_using=nx.Graph(), nodetype=int)
+                else:
+                    print('file not found. check your input parameter')
+            if graph is None:
+                print('can not build graph')
+                exit(0)
+            if sys.argv[1] == 'calculate':
+                calculate_graph_metrics(graph)
+            elif sys.argv[1] == 'generate':
+                if len(sys.argv) <= 3:
+                    print('please pass a random graph type')
+                elif sys.argv[3] == 'erdos_renyi':
+                    generate_erdos_renyi_graph(graph, sys.argv[2])
+                elif sys.argv[3] == 'watts_strogatz':
+                    generate_watts_strogatz_graph(graph, sys.argv[2])
+                elif sys.argv[3] == 'barabasi_albert':
+                    generate_barabasi_albert_graph(graph, sys.argv[2])
+                elif sys.argv[3] == 'random_kernel':
+                    generate_random_kernel_graph(graph, sys.argv[2])
+                else:
+                    print('invalid random graph type')
+            elif sys.argv[1] == 'community_detect':
+                if len(sys.argv) <= 3:
+                    print('please pass a community detection algorithm')
+                elif sys.argv[3] == 'girvan_newman':
+                    detect_girvan_newman_communities(graph)
+                elif sys.argv[3] == 'clauset_newman_moore':
+                    detect_clauset_newman_moore_communities(graph)
+                else:
+                    print('invalid community detection algorithm')
             else:
-                print('invalid random graph type')
-        elif sys.argv[1] == 'community_detect':
-            if len(sys.argv) <= 3:
-                print('please pass a community detection algorithm')
-            elif sys.argv[3] == 'girvan_newman':
-                detect_girvan_newman_communities(graph)
-            elif sys.argv[3] == 'clauset_newman_moore':
-                detect_clauset_newman_moore_communities(graph)
-            else:
-                print('invalid community detection algorithm')
-        else:
-            print('invalid command')
+                print('invalid command')
             

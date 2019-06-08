@@ -1,4 +1,4 @@
-# Dynamic Complex Network Assignment #4
+# Dynamic Complex Network Assignment #5
 
 ## Installation
 ```
@@ -40,3 +40,15 @@ $ python3 main.py community_detect <DATASET_FILE> <COMMUNITY_DETECTION_ALGORITHM
 **DATASET_FILE** can be `facebook`, `physics` and `food_web`.
 
 **COMMUNITY_DETECTION_ALGORITHM** can be `girvan_newman` and `clauset_newman_moore`.
+
+## Simulate Epidemic Models
+
+In order to simulate epidemic models, run this:
+
+```
+$ python3 main.py simulate <EPIDEMIC_MODEL> <RANDOM_GRAPH_MODEL>
+```
+
+**EPIDEMIC_MODEL** can be `si` and `sir`
+
+**RANDOM_GRAPH_MODEL** can be `erdos_renyi` and `barabasi_albert`
